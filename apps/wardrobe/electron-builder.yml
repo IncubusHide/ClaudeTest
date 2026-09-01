@@ -1,0 +1,30 @@
+appId: com.gianluca.wardrobetracker
+productName: Wardrobe Tracker
+copyright: Copyright © 2026
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - out/**
+  - package.json
+
+# better-sqlite3 ships N-API prebuilt binaries, so there is nothing to compile
+# at package time - but the .node file must live outside the asar archive.
+asarUnpack:
+  - '**/*.node'
+npmRebuild: false
+nodeGypRebuild: false
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: Wardrobe Tracker

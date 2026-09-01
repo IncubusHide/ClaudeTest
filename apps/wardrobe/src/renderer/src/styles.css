@@ -1,0 +1,716 @@
+/* ---------------------------------------------------------------- tokens */
+:root {
+  --bg: #f6f6f8;
+  --surface: #ffffff;
+  --surface-2: #eeeef2;
+  --border: #dcdce4;
+  --text: #1b1b22;
+  --text-muted: #6a6a78;
+  --accent: #4f46e5;
+  --accent-text: #ffffff;
+  --danger: #c0392b;
+  --clean: #1f9d55;
+  --dirty: #c47f17;
+  --laundry: #2f6fd0;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px rgb(0 0 0 / 8%);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12121a;
+    --surface: #1c1c26;
+    --surface-2: #262633;
+    --border: #33334a;
+    --text: #ecedf5;
+    --text-muted: #9a9ab0;
+    --accent: #7c74ff;
+    --accent-text: #0e0e16;
+    --danger: #ff6b5e;
+    --clean: #52d08a;
+    --dirty: #e0a94a;
+    --laundry: #6ba7ff;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 45%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* The window chrome is the app's frame; the page itself never scrolls. */
+  overflow: hidden;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------- structure */
+.app {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  height: 100vh;
+}
+
+.main {
+  overflow-y: auto;
+  padding: 28px 32px 48px;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  color: var(--text-muted);
+}
+
+.view__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.view__subtitle,
+.hint {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* --------------------------------------------------------------- sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 16px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.sidebar__mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 15px;
+}
+
+.sidebar__links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar__link:hover {
+  background: var(--surface-2);
+}
+
+.sidebar__link.is-active {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.sidebar__badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(128 128 160 / 22%);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar__footer {
+  margin-top: auto;
+  padding: 0 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------- filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.filters__search {
+  flex: 1 1 260px;
+}
+
+input,
+select,
+textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* --------------------------------------------------------------- buttons */
+.button {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button--primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 550;
+}
+
+.button--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: var(--accent);
+}
+
+.button--danger {
+  border-color: transparent;
+  background: transparent;
+  color: var(--danger);
+}
+
+.button--small {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.icon-button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* ----------------------------------------------------------------- pills */
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid currentcolor;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+}
+
+button.pill {
+  font-family: inherit;
+}
+
+.pill--clean { color: var(--clean); }
+.pill--dirty { color: var(--dirty); }
+.pill--in-laundry { color: var(--laundry); }
+
+.badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.badge--ok {
+  background: color-mix(in srgb, var(--clean) 18%, transparent);
+  color: var(--clean);
+}
+
+/* ------------------------------------------------------------------ grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.card__photo {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.card__favorite {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #ffc857;
+  font-size: 16px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 55%);
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+
+.photo--empty {
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* The thumbnails in outfit rows and laundry lists are too small for a word. */
+.outfit__item .photo--empty,
+.laundry-list .photo--empty {
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 12px;
+}
+
+.card__title {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__meta {
+  overflow: hidden;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.empty {
+  display: grid;
+  gap: 14px;
+  place-items: center;
+  padding: 80px 20px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------- dialogs */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgb(0 0 0 / 45%);
+  z-index: 20;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(720px, 100%);
+  max-height: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.dialog--wide {
+  width: min(960px, 100%);
+}
+
+.dialog:focus {
+  outline: none;
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog__body {
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.dialog__footer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ------------------------------------------------------------ item form */
+.item-form {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 22px;
+}
+
+.item-form__photo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-form__photo .photo {
+  border-radius: var(--radius);
+}
+
+.item-form__photo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.item-form__fields,
+.outfit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  /* Without this the input's intrinsic width stops the row from shrinking. */
+  min-width: 0;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-width: 0;
+}
+
+.field > span {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 550;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field--narrow {
+  flex: 0 0 90px;
+}
+
+.field__error {
+  color: var(--danger);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------- outfit form */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.picker__header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.chip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  padding: 0 0 7px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.chip--on {
+  border-color: var(--accent);
+}
+
+.chip__label {
+  overflow: hidden;
+  padding: 0 8px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------- outfits */
+.outfit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.outfit {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.outfit__main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.outfit__heading {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.outfit__notes {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.outfit__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.outfit__item {
+  width: 62px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.outfit__item.is-dirty {
+  opacity: 0.42;
+}
+
+.outfit__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* -------------------------------------------------------------- laundry */
+.laundry-group {
+  margin-bottom: 30px;
+}
+
+.laundry-group__header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.laundry-group__header h2 {
+  font-size: 16px;
+}
+
+.count {
+  margin-left: 6px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.laundry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.laundry-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.laundry-list .photo {
+  width: 44px;
+  height: 44px;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+.laundry-list__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.laundry-list__text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------- banner */
+.banner {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}

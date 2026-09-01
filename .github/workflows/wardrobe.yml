@@ -1,0 +1,37 @@
+name: wardrobe app
+
+# The app consumes @wardrobe/core from source, so a change to the package has
+# to re-verify the app as well.
+on:
+  push:
+    paths:
+      - 'apps/wardrobe/**'
+      - 'packages/wardrobe-core/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.base.json'
+      - '.github/workflows/wardrobe.yml'
+  pull_request:
+    paths:
+      - 'apps/wardrobe/**'
+      - 'packages/wardrobe-core/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.base.json'
+      - '.github/workflows/wardrobe.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck --workspace=@apps/wardrobe
+      - run: npm run test --workspace=@apps/wardrobe
+      - run: npm run build --workspace=@apps/wardrobe

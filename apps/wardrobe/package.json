@@ -1,0 +1,36 @@
+{
+  "name": "@apps/wardrobe",
+  "version": "0.1.0",
+  "productName": "Wardrobe Tracker",
+  "private": true,
+  "description": "Wardrobe Tracker - a local-first desktop app for cataloguing clothes, building outfits and keeping on top of the laundry",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "start": "electron-vite preview",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "rebuild": "electron-builder install-app-deps",
+    "package": "npm run build && electron-builder --dir",
+    "dist:win": "npm run build && electron-builder --win",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "@wardrobe/core": "*",
+    "electron": "^44.1.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11"
+  }
+}

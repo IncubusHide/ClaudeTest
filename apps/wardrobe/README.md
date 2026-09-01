@@ -1,0 +1,90 @@
+# Wardrobe Tracker
+
+A local-first desktop app for cataloguing your clothes, combining them into
+outfits and keeping on top of the laundry. Everything lives on your own
+machine — there is no account, no server and no network access.
+
+## What it does
+
+- **Wardrobe** — a photo grid of every item, with search across name, brand,
+  colour and notes, plus filters by category, laundry status and favourites.
+- **Outfits** — save combinations of items. Each outfit shows whether it is
+  ready to wear or waiting on something in the wash. "Wear today" marks every
+  piece worn in one click.
+- **Laundry** — the items that need washing and the ones in the machine, with
+  bulk "put all in the laundry" and "mark all as clean" actions.
+
+Each item cycles `clean → needs washing → in the laundry → clean`, and tracks
+how many times it has been worn and when it was last worn.
+
+## Running it
+
+```bash
+npm install     # from the repository root
+npm run dev     # or: npm run dev --workspace=@apps/wardrobe
+```
+
+## Building a Windows installer
+
+```bash
+npm run dist:win
+```
+
+The `.exe` installer is written to `apps/wardrobe/release/`. `better-sqlite3`
+ships N-API prebuilt binaries, so **no Visual Studio Build Tools are needed** —
+nothing is compiled at package time.
+
+Building a Windows installer has to happen on Windows. To produce macOS or
+Linux builds later, add the relevant targets to `electron-builder.yml` and
+build on that platform (or in CI).
+
+## Where your data lives
+
+Everything is stored under `%APPDATA%\Wardrobe Tracker` on Windows
+(`~/.config/Wardrobe Tracker` on Linux, `~/Library/Application Support/Wardrobe Tracker`
+on macOS):
+
+- `wardrobe.db` — a SQLite database holding items and outfits
+- `photos/` — two JPEGs per item: a display copy capped at 1600px wide and a
+  480px thumbnail
+
+Photos you import are **copied** into that folder, so moving or deleting the
+original file afterwards is safe. The originals are never modified. To back up
+or move to a new computer, copy the whole folder.
+
+Note: HEIC photos straight from an iPhone are not supported — Electron cannot
+decode them. Export as JPEG first.
+
+## How it is put together
+
+```
+src/
+├── main/        Electron main process — the only code that touches disk
+│   ├── db.ts            SQLite connection, schema and migrations
+│   ├── repository.ts    All queries, mapping rows to domain objects
+│   ├── photos.ts        Photo import, resizing and thumbnails
+│   ├── ipc.ts           Request handlers exposed to the renderer
+│   └── index.ts         App lifecycle, window, photo protocol
+├── preload/     contextBridge — the renderer's only door to the main process
+├── renderer/    React UI
+└── shared/      The typed contract both sides import
+```
+
+The renderer runs with `contextIsolation` on, `nodeIntegration` off and a
+content security policy that blocks remote content. It cannot touch the
+filesystem or the database directly; it can only call the methods listed in
+`src/shared/api.ts`, each of which is a `contextBridge` wrapper in
+`src/preload/index.ts`. Photos reach the UI through a custom `wardrobe-photo://`
+protocol rather than `file://` paths.
+
+Domain rules — filtering, sorting, validation, the laundry cycle, whether an
+outfit is wearable — live in `@wardrobe/core`, which has no Electron, React or
+SQL dependencies and is unit tested on its own.
+
+## Schema changes
+
+`src/main/db.ts` holds an array of migrations and SQLite's `user_version`
+records how many have run. To change the schema, **append** a new entry to that
+array; never edit an existing one, or databases already in the wild will not
+match. Then add a test in `src/main/repository.test.ts`, which runs against a
+real SQLite file rather than a mock.

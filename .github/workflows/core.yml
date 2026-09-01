@@ -1,0 +1,35 @@
+name: wardrobe-core
+
+# Path filters are what keep a monorepo's CI fast: a change to an app must not
+# run every other project's test suite.
+on:
+  push:
+    paths:
+      - 'packages/wardrobe-core/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.base.json'
+      - '.github/workflows/core.yml'
+  pull_request:
+    paths:
+      - 'packages/wardrobe-core/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.base.json'
+      - '.github/workflows/core.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # Nothing here launches Electron, so skip the ~100 MB runtime download.
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck --workspace=@wardrobe/core
+      - run: npm run test --workspace=@wardrobe/core
