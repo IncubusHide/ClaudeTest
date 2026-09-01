@@ -24,6 +24,21 @@ npm install     # from the repository root
 npm run dev     # or: npm run dev --workspace=@apps/wardrobe
 ```
 
+## Troubleshooting
+
+**`Error: Electron uninstall` when starting the app.** Electron's runtime
+binary is missing — its download is skipped if an earlier install failed part
+way through. `npm install` repairs this automatically; to force it directly:
+
+```bash
+node node_modules/electron/install.js
+```
+
+**`EPERM: operation not permitted` during `npm install` on Windows.** Something
+is holding files open, usually antivirus or OneDrive file sync. Keep the
+project outside synced folders such as Desktop, Documents or OneDrive —
+somewhere like `C:\dev\` works well.
+
 ## Building a Windows installer
 
 ```bash
