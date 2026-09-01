@@ -30,9 +30,9 @@ npm run dev     # or: npm run dev --workspace=@apps/wardrobe
 npm run dist:win
 ```
 
-The `.exe` installer is written to `apps/wardrobe/release/`. `better-sqlite3`
-ships N-API prebuilt binaries, so **no Visual Studio Build Tools are needed** —
-nothing is compiled at package time.
+The `.exe` installer is written to `apps/wardrobe/release/`. The app has **no
+native dependencies**, so nothing is compiled at install or package time and no
+C++ toolchain (Visual Studio Build Tools) is needed.
 
 Building a Windows installer has to happen on Windows. To produce macOS or
 Linux builds later, add the relevant targets to `electron-builder.yml` and

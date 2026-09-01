@@ -57,6 +57,12 @@ Security invariants for the renderer, which must not be relaxed:
 policy in `index.html` that permits no remote content. The renderer reaches the
 main process only through `window.wardrobe`.
 
+SQLite comes from Node's built-in `node:sqlite`, which Electron bundles. Do not
+replace it with a native package such as better-sqlite3: npm runs `node-gyp
+rebuild` by default for any dependency that has a `binding.gyp` and no install
+script, which fails on a machine without a C++ toolchain. Keeping the app free
+of native dependencies is what makes `npm install` work everywhere.
+
 Schema changes are append-only migrations in `src/main/db.ts` — see that file
 and the app README. `src/main/repository.test.ts` runs against a real SQLite
 file in a temp directory, so add cases there rather than mocking.

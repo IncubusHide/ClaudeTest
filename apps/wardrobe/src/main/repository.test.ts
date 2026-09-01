@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { emptyItemDraft } from '@wardrobe/core';
 import type { ClothingItemDraft } from '@wardrobe/core';
-import { openDatabase } from './db.js';
+import { openDatabase, userVersion } from './db.js';
 import type { Db } from './db.js';
 import { WardrobeRepository } from './repository.js';
 
@@ -35,7 +35,7 @@ describe('WardrobeRepository', () => {
   });
 
   it('applies migrations on a fresh database', () => {
-    expect(db.pragma('user_version', { simple: true })).toBe(1);
+    expect(userVersion(db)).toBe(1);
     expect(repo.listItems()).toEqual([]);
   });
 

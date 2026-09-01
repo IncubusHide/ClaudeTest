@@ -10,10 +10,8 @@ files:
   - out/**
   - package.json
 
-# better-sqlite3 ships N-API prebuilt binaries, so there is nothing to compile
-# at package time - but the .node file must live outside the asar archive.
-asarUnpack:
-  - '**/*.node'
+# SQLite comes from Electron's bundled Node, so there is no native module to
+# rebuild or unpack at package time.
 npmRebuild: false
 nodeGypRebuild: false
 

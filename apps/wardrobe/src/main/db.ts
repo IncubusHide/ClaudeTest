@@ -1,13 +1,19 @@
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 
-export type Db = Database.Database;
+/**
+ * SQLite comes from Node's own `node:sqlite` module, which Electron bundles.
+ * That deliberately avoids a native dependency such as better-sqlite3: those
+ * require a C++ toolchain (Visual Studio Build Tools on Windows) whenever npm
+ * falls back to compiling them, which is a poor first-run experience.
+ */
+export type Db = DatabaseSync;
 
 /**
  * Schema revisions, applied in order. Each entry runs exactly once and then
  * `user_version` is bumped, so shipping a new version of the app only ever adds
- * an entry to the end of this array.
+ * an entry to the end of this array. Never edit an existing entry.
  */
 const MIGRATIONS: string[] = [
   `
@@ -45,8 +51,8 @@ const MIGRATIONS: string[] = [
     PRIMARY KEY (outfit_id, item_id)
   );
 
-  CREATE INDEX idx_items_status   ON items(status);
-  CREATE INDEX idx_items_category ON items(category);
+  CREATE INDEX idx_items_status      ON items(status);
+  CREATE INDEX idx_items_category    ON items(category);
   CREATE INDEX idx_outfit_items_item ON outfit_items(item_id);
   `,
 ];
@@ -58,23 +64,47 @@ const MIGRATIONS: string[] = [
 export function openDatabase(dataDir: string): Db {
   if (!existsSync(dataDir)) mkdirSync(dataDir, { recursive: true });
 
-  const db = new Database(join(dataDir, 'wardrobe.db'));
+  const db = new DatabaseSync(join(dataDir, 'wardrobe.db'));
 
   // WAL keeps reads fast while a write is in flight; foreign keys are off by
   // default in SQLite and we rely on ON DELETE CASCADE for outfit membership.
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
+  db.exec('PRAGMA journal_mode = WAL');
+  db.exec('PRAGMA foreign_keys = ON');
 
   migrate(db);
   return db;
 }
 
-function migrate(db: Db): void {
-  const current = db.pragma('user_version', { simple: true }) as number;
+export function userVersion(db: Db): number {
+  const row = db.prepare('PRAGMA user_version').get() as { user_version: number } | undefined;
+  return row?.user_version ?? 0;
+}
 
-  for (let version = current; version < MIGRATIONS.length; version += 1) {
+function migrate(db: Db): void {
+  for (let version = userVersion(db); version < MIGRATIONS.length; version += 1) {
     const sql = MIGRATIONS[version];
     if (!sql) continue;
-    db.exec(`BEGIN; ${sql} PRAGMA user_version = ${version + 1}; COMMIT;`);
+    // PRAGMA user_version does not accept a bound parameter, and `version` is a
+    // loop counter rather than anything user-supplied.
+    transaction(db, () => {
+      db.exec(sql);
+      db.exec(`PRAGMA user_version = ${version + 1}`);
+    });
+  }
+}
+
+/**
+ * Runs `work` inside a transaction, rolling back if it throws.
+ * `node:sqlite` has no transaction helper of its own.
+ */
+export function transaction<T>(db: Db, work: () => T): T {
+  db.exec('BEGIN');
+  try {
+    const result = work();
+    db.exec('COMMIT');
+    return result;
+  } catch (cause) {
+    db.exec('ROLLBACK');
+    throw cause;
   }
 }

@@ -31,7 +31,7 @@ full history of that directory.
 
 ## Getting started
 
-Requires **Node 22 or newer**.
+Requires **Node 22.5 or newer** (Node 24 recommended).
 
 ```bash
 npm install          # installs every workspace at once

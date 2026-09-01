@@ -8,6 +8,7 @@ import type {
   Outfit,
   OutfitDraft,
 } from '@wardrobe/core';
+import { transaction } from './db.js';
 import type { Db } from './db.js';
 
 interface ItemRow {
@@ -64,7 +65,7 @@ export class WardrobeRepository {
   // ---------------------------------------------------------------- items
 
   listItems(): ClothingItem[] {
-    const rows = this.db.prepare('SELECT * FROM items ORDER BY created_at DESC').all() as ItemRow[];
+    const rows = this.db.prepare('SELECT * FROM items ORDER BY created_at DESC').all() as unknown as ItemRow[];
     return rows.map(toItem);
   }
 
@@ -101,7 +102,7 @@ export class WardrobeRepository {
       )
       .run({ ...clean, id, favorite: clean.favorite ? 1 : 0, stamp: now() });
 
-    if (result.changes === 0) throw new Error(`No item with id ${id}`);
+    if (Number(result.changes) === 0) throw new Error(`No item with id ${id}`);
     return this.getItem(id);
   }
 
@@ -123,9 +124,9 @@ export class WardrobeRepository {
     const stamp = now();
     const update = this.db.prepare('UPDATE items SET status = ?, updated_at = ? WHERE id = ?');
 
-    this.db.transaction(() => {
+    transaction(this.db, () => {
       for (const id of ids) update.run(status, stamp, id);
-    })();
+    });
 
     return ids.map((id) => this.getItem(id));
   }
@@ -152,11 +153,11 @@ export class WardrobeRepository {
   listOutfits(): Outfit[] {
     const rows = this.db
       .prepare('SELECT * FROM outfits ORDER BY created_at DESC')
-      .all() as OutfitRow[];
+      .all() as unknown as OutfitRow[];
 
     const members = this.db
       .prepare('SELECT outfit_id, item_id FROM outfit_items ORDER BY position ASC')
-      .all() as { outfit_id: string; item_id: string }[];
+      .all() as unknown as { outfit_id: string; item_id: string }[];
 
     const byOutfit = new Map<string, string[]>();
     for (const { outfit_id, item_id } of members) {
@@ -188,7 +189,7 @@ export class WardrobeRepository {
     const id = randomUUID();
     const stamp = now();
 
-    this.db.transaction(() => {
+    transaction(this.db, () => {
       this.db
         .prepare(
           `INSERT INTO outfits (id, name, notes, created_at, updated_at)
@@ -196,7 +197,7 @@ export class WardrobeRepository {
         )
         .run(id, clean.name, clean.notes, stamp, stamp);
       this.replaceMembers(id, clean.itemIds);
-    })();
+    });
 
     return this.getOutfit(id);
   }
@@ -204,13 +205,13 @@ export class WardrobeRepository {
   updateOutfit(id: string, draft: OutfitDraft): Outfit {
     const clean = normalizeOutfitDraft(draft);
 
-    this.db.transaction(() => {
+    transaction(this.db, () => {
       const result = this.db
         .prepare('UPDATE outfits SET name = ?, notes = ?, updated_at = ? WHERE id = ?')
         .run(clean.name, clean.notes, now(), id);
-      if (result.changes === 0) throw new Error(`No outfit with id ${id}`);
+      if (Number(result.changes) === 0) throw new Error(`No outfit with id ${id}`);
       this.replaceMembers(id, clean.itemIds);
-    })();
+    });
 
     return this.getOutfit(id);
   }
@@ -224,14 +225,14 @@ export class WardrobeRepository {
     const outfit = this.getOutfit(id);
     const stamp = now();
 
-    this.db.transaction(() => {
+    transaction(this.db, () => {
       for (const itemId of outfit.itemIds) this.wearItem(itemId);
       this.db
         .prepare(
           'UPDATE outfits SET wear_count = wear_count + 1, last_worn_at = ?, updated_at = ? WHERE id = ?',
         )
         .run(stamp, stamp, id);
-    })();
+    });
 
     return { outfit: this.getOutfit(id), items: this.listItems() };
   }
