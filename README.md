@@ -52,6 +52,12 @@ To work on a single workspace, add `--workspace`:
 npm test --workspace=@wardrobe/core
 ```
 
+## Just want to use the app?
+
+You do not need any of this to run the Wardrobe Tracker. GitHub Actions builds
+a Windows installer on every push — see
+[apps/wardrobe/README.md](apps/wardrobe/README.md#installing-it-as-a-normal-desktop-app).
+
 ## Adding a second app
 
 1. `mkdir apps/<name>` and give it a `package.json` with a unique `name`.

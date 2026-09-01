@@ -39,19 +39,38 @@ is holding files open, usually antivirus or OneDrive file sync. Keep the
 project outside synced folders such as Desktop, Documents or OneDrive —
 somewhere like `C:\dev\` works well.
 
-## Building a Windows installer
+## Installing it as a normal desktop app
+
+You do not need Node, a terminal or this source code to *use* the app — only to
+develop it. Every push builds Windows binaries in GitHub Actions:
+
+1. Open the repository's **Actions** tab and pick the latest
+   **build windows app** run.
+2. Download the **wardrobe-tracker-windows** artifact and unzip it.
+3. Double-click **Wardrobe Tracker Setup.exe**.
+
+It installs for the current user only, so there is no administrator prompt, and
+it puts a **Wardrobe Tracker** shortcut on the desktop. From then on the app is
+an ordinary double-click, with no console window.
+
+The zip also contains **Wardrobe Tracker Portable.exe**, which runs directly
+without installing anything.
+
+> **Windows will warn you the first time.** The build is not code-signed, so
+> SmartScreen shows "Windows protected your PC". Choose **More info** →
+> **Run anyway**. Silencing that warning permanently requires a paid code
+> signing certificate.
+
+### Building it yourself
 
 ```bash
 npm run dist:win
 ```
 
-The `.exe` installer is written to `apps/wardrobe/release/`. The app has **no
-native dependencies**, so nothing is compiled at install or package time and no
-C++ toolchain (Visual Studio Build Tools) is needed.
-
-Building a Windows installer has to happen on Windows. To produce macOS or
-Linux builds later, add the relevant targets to `electron-builder.yml` and
-build on that platform (or in CI).
+Output lands in `apps/wardrobe/release/`. The app has **no native
+dependencies**, so nothing is compiled and no C++ toolchain (Visual Studio
+Build Tools) is needed. Windows binaries must be built on Windows; for macOS or
+Linux, add the targets to `electron-builder.yml` and build on that platform.
 
 ## Where your data lives
 

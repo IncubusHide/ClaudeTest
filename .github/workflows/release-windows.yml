@@ -1,0 +1,65 @@
+name: build windows app
+
+# Produces a double-clickable Windows build: a one-click installer and a
+# portable exe. Every push to a working branch leaves them as a downloadable
+# artifact; publishing a public GitHub Release is a deliberate, separate act.
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+    paths:
+      - 'apps/wardrobe/**'
+      - 'packages/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/release-windows.yml'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Also publish a public GitHub Release with these files'
+        type: boolean
+        default: false
+      version:
+        description: 'Release tag, for example v0.1.0 (only used when releasing)'
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      # Not `--ignore-scripts`: the postinstall hook fetches Electron's runtime,
+      # which electron-builder needs in order to package the app.
+      - run: npm ci
+
+      - run: npm run typecheck --workspace=@apps/wardrobe
+      - run: npm run test --workspace=@apps/wardrobe
+      - run: npm run dist:win
+
+      - name: Upload installer and portable build
+        uses: actions/upload-artifact@v4
+        with:
+          name: wardrobe-tracker-windows
+          path: apps/wardrobe/release/*.exe
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish a GitHub Release
+        if: inputs.release && inputs.version != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          files: apps/wardrobe/release/*.exe
+          generate_release_notes: true

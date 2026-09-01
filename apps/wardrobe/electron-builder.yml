@@ -15,14 +15,28 @@ files:
 npmRebuild: false
 nodeGypRebuild: false
 
+# Stated explicitly because electron lives in the hoisted root node_modules of
+# the workspace, which electron-builder cannot always resolve on its own.
+electronVersion: 44.1.0
+
 win:
+  icon: build/icon.ico
+  artifactName: ${productName} Setup ${version}.${ext}
   target:
     - target: nsis
       arch: [x64]
+    - target: portable
+      arch: [x64]
 
+# A one-click install needs no wizard and no administrator rights: it installs
+# per-user, drops a desktop shortcut and starts the app straight away.
 nsis:
-  oneClick: false
+  oneClick: true
   perMachine: false
-  allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
+  createStartMenuShortcut: true
+  runAfterFinish: true
   shortcutName: Wardrobe Tracker
+
+portable:
+  artifactName: ${productName} Portable ${version}.${ext}
