@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LaundryView } from './components/LaundryView.js';
 import { OutfitsView } from './components/OutfitsView.js';
 import { Sidebar } from './components/Sidebar.js';
+import { TitleBar } from './components/TitleBar.js';
 import type { ViewName } from './components/Sidebar.js';
 import { WardrobeView } from './components/WardrobeView.js';
 import { useWardrobe } from './useWardrobe.js';
@@ -11,19 +12,26 @@ export function App() {
   const [view, setView] = useState<ViewName>('wardrobe');
 
   if (store.loading) {
-    return <div className="loading">Opening your wardrobe…</div>;
+    return (
+      <div className="shell">
+        <TitleBar />
+        <div className="loading">Opening your wardrobe…</div>
+      </div>
+    );
   }
 
   return (
-    <div className="app">
-      <Sidebar
-        active={view}
-        onNavigate={setView}
-        items={store.items}
-        outfitCount={store.outfits.length}
-      />
+    <div className="shell">
+      <TitleBar />
+      <div className="app">
+        <Sidebar
+          active={view}
+          onNavigate={setView}
+          items={store.items}
+          outfitCount={store.outfits.length}
+        />
 
-      <main className="main">
+        <main className="main">
         {store.error ? (
           <div className="banner" role="alert">
             <span>{store.error}</span>
@@ -36,7 +44,8 @@ export function App() {
         {view === 'wardrobe' ? <WardrobeView store={store} /> : null}
         {view === 'outfits' ? <OutfitsView store={store} /> : null}
         {view === 'laundry' ? <LaundryView store={store} /> : null}
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

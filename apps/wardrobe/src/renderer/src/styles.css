@@ -126,10 +126,93 @@ h1 {
 }
 
 /* ------------------------------------------------------------- structure */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 .app {
   display: grid;
   grid-template-columns: 236px 1fr;
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ------------------------------------------------------------- titlebar */
+/* The native frame is off, so this bar both labels and moves the window. */
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 38px;
+  padding-left: 12px;
+  background: var(--surface-2);
+  border-bottom: var(--pixel) solid var(--border);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.titlebar__title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 9px;
+}
+
+.titlebar__mark {
+  width: 17px;
+  height: 17px;
+  padding: 2px;
+  background: var(--accent);
+  border: 2px solid var(--border);
+}
+
+.titlebar__controls {
+  display: flex;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar__button {
+  width: 44px;
+  height: 100%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-left: var(--pixel) solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* The glyph is a mask over currentColor, so it follows the theme and hover. */
+.titlebar__button::before {
+  content: '';
+  display: block;
+  width: 15px;
+  height: 15px;
+  margin: 0 auto;
+  background: currentColor;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  mask-position: center;
+}
+
+.titlebar__button--minimize::before { mask-image: url('./assets/icons/minimize.svg'); }
+.titlebar__button--maximize::before { mask-image: url('./assets/icons/maximize.svg'); }
+.titlebar__button--close::before { mask-image: url('./assets/icons/close.svg'); }
+
+.titlebar__button:hover {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.titlebar__button--close:hover {
+  background: var(--danger);
+  color: var(--surface);
 }
 
 .main {
@@ -140,7 +223,7 @@ h1 {
 .loading {
   display: grid;
   place-items: center;
-  height: 100vh;
+  flex: 1;
   font-family: var(--display);
   font-size: 12px;
   color: var(--text-muted);
@@ -193,11 +276,18 @@ h1 {
   flex-shrink: 0;
   width: 30px;
   height: 30px;
+  padding: 4px;
   background: var(--accent);
   border: var(--pixel) solid var(--border);
   box-shadow: 3px 3px 0 var(--shadow);
   color: var(--accent-text);
   font-size: 11px;
+}
+
+.sidebar__mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .sidebar__links {

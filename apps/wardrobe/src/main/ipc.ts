@@ -82,6 +82,22 @@ export function registerIpcHandlers(repo: WardrobeRepository, photos: PhotoStore
 
   ipcMain.handle(CHANNELS.outfitsWear, (_event, id: string) => repo.wearOutfit(id));
 
+  // ------------------------------------------------------------- window
+  // The frame is drawn by the renderer, so these replace the native buttons.
+  const windowOf = (event: Electron.IpcMainInvokeEvent) =>
+    BrowserWindow.fromWebContents(event.sender);
+
+  ipcMain.handle(CHANNELS.windowMinimize, (event) => windowOf(event)?.minimize());
+
+  ipcMain.handle(CHANNELS.windowToggleMaximize, (event) => {
+    const window = windowOf(event);
+    if (!window) return;
+    if (window.isMaximized()) window.unmaximize();
+    else window.maximize();
+  });
+
+  ipcMain.handle(CHANNELS.windowClose, (event) => windowOf(event)?.close());
+
   // ------------------------------------------------------------ laundry
   ipcMain.handle(
     CHANNELS.laundrySetStatusBulk,

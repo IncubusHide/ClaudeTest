@@ -37,6 +37,12 @@ export interface WardrobeApi {
     /** Bulk status change, used by the "wash everything" buttons. */
     setStatusBulk(ids: string[], status: LaundryStatus): Promise<ClothingItem[]>;
   };
+  /** The window has no native frame, so the title bar drives it from the UI. */
+  window: {
+    minimize(): Promise<void>;
+    toggleMaximize(): Promise<void>;
+    close(): Promise<void>;
+  };
 }
 
 /** IPC channel names, kept in one place so main and preload cannot drift. */
@@ -55,6 +61,9 @@ export const CHANNELS = {
   outfitsRemove: 'outfits:remove',
   outfitsWear: 'outfits:wear',
   laundrySetStatusBulk: 'laundry:set-status-bulk',
+  windowMinimize: 'window:minimize',
+  windowToggleMaximize: 'window:toggle-maximize',
+  windowClose: 'window:close',
 } as const;
 
 /** Custom protocol used to load stored photos into the renderer. */

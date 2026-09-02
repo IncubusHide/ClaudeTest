@@ -102,6 +102,11 @@ category, defined as text grids in
 an image editor. The app icon works the same way: `build/make-icon.mjs` scales a
 16x16 grid up by whole-number factors.
 
+The window has no native frame: `src/renderer/src/components/TitleBar.tsx`
+draws its own title bar and minimise, maximise and close buttons, which reach
+the main process through `window.wardrobe.window`. Reusable icons live in
+`src/renderer/src/assets/icons/` — see the README there.
+
 Two pixel typefaces are bundled so the app stays fully offline: **Pixelify
 Sans** (body) and **Press Start 2P** (headings), both by their respective
 authors under the SIL Open Font License 1.1. The licence travels with them in

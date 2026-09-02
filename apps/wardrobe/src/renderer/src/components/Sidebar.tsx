@@ -1,4 +1,5 @@
 import { countByStatus } from '@wardrobe/core';
+import hangerIcon from '../assets/icons/hanger.svg';
 import type { ClothingItem } from '@wardrobe/core';
 
 export type ViewName = 'wardrobe' | 'outfits' | 'laundry';
@@ -23,7 +24,9 @@ export function Sidebar({ active, onNavigate, items, outfitCount }: SidebarProps
   return (
     <nav className="sidebar">
       <div className="sidebar__brand">
-        <span className="sidebar__mark">W</span>
+        <span className="sidebar__mark">
+          <img src={hangerIcon} alt="" />
+        </span>
         <span>Wardrobe</span>
       </div>
 

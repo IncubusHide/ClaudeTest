@@ -27,6 +27,11 @@ const api: WardrobeApi = {
   laundry: {
     setStatusBulk: (ids, status) => ipcRenderer.invoke(CHANNELS.laundrySetStatusBulk, ids, status),
   },
+  window: {
+    minimize: () => ipcRenderer.invoke(CHANNELS.windowMinimize),
+    toggleMaximize: () => ipcRenderer.invoke(CHANNELS.windowToggleMaximize),
+    close: () => ipcRenderer.invoke(CHANNELS.windowClose),
+  },
 };
 
 contextBridge.exposeInMainWorld('wardrobe', api);

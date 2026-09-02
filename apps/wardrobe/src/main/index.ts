@@ -28,6 +28,8 @@ function createWindow(): BrowserWindow {
     minWidth: 940,
     minHeight: 620,
     show: false,
+    // The app draws its own title bar so the chrome matches the theme.
+    frame: false,
     // Matches the stylesheet, so there is no flash of the wrong colour.
     backgroundColor: nativeTheme.shouldUseDarkColors ? '#241c15' : '#e9d9bc',
     title: 'Wardrobe Tracker',

@@ -3,13 +3,11 @@ import {
   CATEGORIES,
   CATEGORY_LABELS,
   ITEM_SORT_LABELS,
-  LAUNDRY_STATUSES,
-  LAUNDRY_STATUS_LABELS,
   filterItems,
   nextLaundryStatus,
   sortItems,
 } from '@wardrobe/core';
-import type { Category, ClothingItem, ItemSort, LaundryStatus } from '@wardrobe/core';
+import type { Category, ClothingItem, ItemSort } from '@wardrobe/core';
 import type { WardrobeStore } from '../useWardrobe.js';
 import { ItemCard } from './ItemCard.js';
 import { ItemFormDialog } from './ItemFormDialog.js';
@@ -23,7 +21,6 @@ interface WardrobeViewProps {
 export function WardrobeView({ store }: WardrobeViewProps) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<Category | 'all'>('all');
-  const [status, setStatus] = useState<LaundryStatus | 'all'>('all');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [sort, setSort] = useState<ItemSort>('recent');
   const [editing, setEditing] = useState<ClothingItem | 'new' | null>(null);
@@ -34,12 +31,11 @@ export function WardrobeView({ store }: WardrobeViewProps) {
         filterItems(store.items, {
           search,
           categories: category === 'all' ? [] : [category],
-          statuses: status === 'all' ? [] : [status],
           favoritesOnly,
         }),
         sort,
       ),
-    [store.items, search, category, status, favoritesOnly, sort],
+    [store.items, search, category, favoritesOnly, sort],
   );
 
   // `editing` holds a snapshot, so re-read from the store to pick up photo changes.
@@ -82,15 +78,6 @@ export function WardrobeView({ store }: WardrobeViewProps) {
           {CATEGORIES.map((value) => (
             <option key={value} value={value}>
               {CATEGORY_LABELS[value]}
-            </option>
-          ))}
-        </select>
-
-        <select value={status} onChange={(event) => setStatus(event.target.value as never)}>
-          <option value="all">Any status</option>
-          {LAUNDRY_STATUSES.map((value) => (
-            <option key={value} value={value}>
-              {LAUNDRY_STATUS_LABELS[value]}
             </option>
           ))}
         </select>
