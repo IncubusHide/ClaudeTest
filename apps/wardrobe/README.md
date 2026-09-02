@@ -102,6 +102,19 @@ category, defined as text grids in
 an image editor. The app icon works the same way: `build/make-icon.mjs` scales a
 16x16 grid up by whole-number factors.
 
+The palette button in the title bar opens a theme picker: **Follow system**
+(the default), **Cottage Day**, **Cottage Night**, **Game Boy**, **Nord**,
+**Dracula** and **Rosé Pine Dawn**. A theme is just a set of the CSS custom
+properties the stylesheet already reads, defined in
+`src/renderer/src/themes.ts`; choosing one writes them inline on `<html>`,
+which beats the stylesheet's own rules, and "Follow system" clears them again.
+The choice is remembered per machine.
+
+Foreground colours are tuned so each clears 4.5:1 against its own surface
+(3:1 for the favourite star, which is an icon rather than text). That moves a
+few shades of the borrowed palettes off their published values — hue and
+saturation are kept, only lightness shifts.
+
 The window has no native frame: `src/renderer/src/components/TitleBar.tsx`
 draws its own title bar and minimise, maximise and close buttons, which reach
 the main process through `window.wardrobe.window`. Reusable icons live in

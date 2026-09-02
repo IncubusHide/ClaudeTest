@@ -1,20 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LaundryView } from './components/LaundryView.js';
 import { OutfitsView } from './components/OutfitsView.js';
 import { Sidebar } from './components/Sidebar.js';
+import { ThemeDialog } from './components/ThemeDialog.js';
 import { TitleBar } from './components/TitleBar.js';
 import type { ViewName } from './components/Sidebar.js';
 import { WardrobeView } from './components/WardrobeView.js';
+import { applyTheme, loadThemeId } from './themes.js';
 import { useWardrobe } from './useWardrobe.js';
 
 export function App() {
   const store = useWardrobe();
   const [view, setView] = useState<ViewName>('wardrobe');
+  const [themeId, setThemeId] = useState(loadThemeId);
+  const [themesOpen, setThemesOpen] = useState(false);
+
+  useEffect(() => {
+    applyTheme(themeId);
+  }, [themeId]);
 
   if (store.loading) {
     return (
       <div className="shell">
-        <TitleBar />
+        <TitleBar onOpenThemes={() => setThemesOpen(true)} />
         <div className="loading">Opening your wardrobe…</div>
       </div>
     );
@@ -22,7 +30,7 @@ export function App() {
 
   return (
     <div className="shell">
-      <TitleBar />
+      <TitleBar onOpenThemes={() => setThemesOpen(true)} />
       <div className="app">
         <Sidebar
           active={view}
@@ -46,6 +54,14 @@ export function App() {
         {view === 'laundry' ? <LaundryView store={store} /> : null}
         </main>
       </div>
+
+      {themesOpen ? (
+        <ThemeDialog
+          current={themeId}
+          onChoose={setThemeId}
+          onClose={() => setThemesOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }

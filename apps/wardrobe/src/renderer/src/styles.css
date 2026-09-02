@@ -30,15 +30,15 @@
   --border: #7d5f45;
   --shadow: #7d5f45;
   --text: #453626;
-  --text-muted: #8b7156;
-  --accent: #6f9159;
-  --accent-hover: #7fa367;
+  --text-muted: #826950;
+  --accent: #597548;
+  --accent-hover: #485f3a;
   --accent-text: #fbf3e2;
   --danger: #b0503a;
-  --gold: #d9a13b;
-  --clean: #4f8040;
-  --dirty: #b3811f;
-  --laundry: #5c7f9e;
+  --gold: #b48123;
+  --clean: #4b793d;
+  --dirty: #906819;
+  --laundry: #53728e;
   --thread: rgb(125 95 69 / 9%);
   --sprite-line: #6b5138;
 
@@ -59,7 +59,7 @@
     --text: #f1e2c8;
     --text-muted: #b39a78;
     --accent: #8fb173;
-    --accent-hover: #a0c084;
+    --accent-hover: #a1be8a;
     --accent-text: #211a13;
     --danger: #dd8065;
     --gold: #e6b556;
@@ -204,6 +204,7 @@ h1 {
 .titlebar__button--minimize::before { mask-image: url('./assets/icons/minimize.svg'); }
 .titlebar__button--maximize::before { mask-image: url('./assets/icons/maximize.svg'); }
 .titlebar__button--close::before { mask-image: url('./assets/icons/close.svg'); }
+.titlebar__button--theme::before { mask-image: url('./assets/icons/palette.svg'); }
 
 .titlebar__button:hover {
   background: var(--accent);
@@ -683,6 +684,63 @@ textarea {
   padding: 13px 16px;
   background: var(--surface-2);
   border-top: var(--pixel) solid var(--border);
+}
+
+/* ---------------------------------------------------------------- themes */
+.themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 14px;
+}
+
+.theme {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 4px 4px 0 var(--shadow);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme:hover {
+  background: var(--surface-2);
+}
+
+.theme--on {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.theme--on .hint {
+  color: var(--accent-text);
+  opacity: 0.8;
+}
+
+.theme:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 var(--shadow);
+}
+
+/* The swatch is the theme's own colours, so the preview cannot drift. */
+.theme__swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 34px;
+  margin-bottom: 6px;
+  border: 2px solid var(--border);
+}
+
+.theme--on .theme__swatches {
+  border-color: var(--accent-text);
+}
+
+.theme__swatches > span {
+  display: block;
 }
 
 /* ------------------------------------------------------------- item form */
