@@ -89,6 +89,24 @@ or move to a new computer, copy the whole folder.
 Note: HEIC photos straight from an iPhone are not supported — Electron cannot
 decode them. Export as JPEG first.
 
+## Look and feel
+
+A cosy, pixelated cottagecore theme: linen and cream by day, lantern-lit timber
+at night, following the system's light or dark setting. Nothing is rounded,
+shadows are hard offsets with no blur, and borders are chunky — the three rules
+that keep a pixel look honest.
+
+Items without a photograph fall back to hand-drawn 12x12 pixel sprites, one per
+category, defined as text grids in
+`src/renderer/src/components/PixelSprite.tsx` — so they can be redrawn without
+an image editor. The app icon works the same way: `build/make-icon.mjs` scales a
+16x16 grid up by whole-number factors.
+
+Two pixel typefaces are bundled so the app stays fully offline: **Pixelify
+Sans** (body) and **Press Start 2P** (headings), both by their respective
+authors under the SIL Open Font License 1.1. The licence travels with them in
+`src/renderer/src/assets/fonts/OFL.txt`.
+
 ## How it is put together
 
 ```

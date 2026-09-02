@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { BrowserWindow, app, protocol, shell } from 'electron';
+import { BrowserWindow, app, nativeTheme, protocol, shell } from 'electron';
 import { PHOTO_PROTOCOL } from '../shared/api.js';
 import { openDatabase } from './db.js';
 import { registerIpcHandlers } from './ipc.js';
@@ -28,7 +28,8 @@ function createWindow(): BrowserWindow {
     minWidth: 940,
     minHeight: 620,
     show: false,
-    backgroundColor: '#12121a',
+    // Matches the stylesheet, so there is no flash of the wrong colour.
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#241c15' : '#e9d9bc',
     title: 'Wardrobe Tracker',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

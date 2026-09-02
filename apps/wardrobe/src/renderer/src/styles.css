@@ -1,74 +1,148 @@
+/* ==========================================================================
+   Wardrobe Tracker — a cosy, pixelated cottagecore theme.
+
+   Three rules keep the pixel look honest:
+     1. Nothing is rounded. Pixel art has no anti-aliased curves.
+     2. Shadows are hard offsets with no blur, like a sprite drop shadow.
+     3. Borders are chunky and dark, the way tile edges read in a 2D game.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Pixelify Sans';
+  src: url('./assets/fonts/pixelify-sans.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('./assets/fonts/press-start-2p.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* ---------------------------------------------------------------- tokens */
 :root {
-  --bg: #f6f6f8;
-  --surface: #ffffff;
-  --surface-2: #eeeef2;
-  --border: #dcdce4;
-  --text: #1b1b22;
-  --text-muted: #6a6a78;
-  --accent: #4f46e5;
-  --accent-text: #ffffff;
-  --danger: #c0392b;
-  --clean: #1f9d55;
-  --dirty: #c47f17;
-  --laundry: #2f6fd0;
-  --radius: 10px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 6%), 0 8px 24px rgb(0 0 0 / 8%);
+  /* Daytime: linen, cream and sun-warmed wood. */
+  --bg: #e9d9bc;
+  --surface: #fbf3e2;
+  --surface-2: #e5d3b3;
+  --border: #7d5f45;
+  --shadow: #7d5f45;
+  --text: #453626;
+  --text-muted: #8b7156;
+  --accent: #6f9159;
+  --accent-hover: #7fa367;
+  --accent-text: #fbf3e2;
+  --danger: #b0503a;
+  --gold: #d9a13b;
+  --clean: #4f8040;
+  --dirty: #b3811f;
+  --laundry: #5c7f9e;
+  --thread: rgb(125 95 69 / 9%);
+  --sprite-line: #6b5138;
+
+  --pixel: 3px;
+  --display: 'Press Start 2P', 'Pixelify Sans', monospace;
+  --body: 'Pixelify Sans', 'Trebuchet MS', system-ui, sans-serif;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12121a;
-    --surface: #1c1c26;
-    --surface-2: #262633;
-    --border: #33334a;
-    --text: #ecedf5;
-    --text-muted: #9a9ab0;
-    --accent: #7c74ff;
-    --accent-text: #0e0e16;
-    --danger: #ff6b5e;
-    --clean: #52d08a;
-    --dirty: #e0a94a;
-    --laundry: #6ba7ff;
-    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 45%);
+    /* Evening: lantern light in a dark timber cottage. */
+    --bg: #241c15;
+    --surface: #362b21;
+    --surface-2: #46372a;
+    --border: #8a6a4c;
+    --shadow: #140f0a;
+    --text: #f1e2c8;
+    --text-muted: #b39a78;
+    --accent: #8fb173;
+    --accent-hover: #a0c084;
+    --accent-text: #211a13;
+    --danger: #dd8065;
+    --gold: #e6b556;
+    --clean: #86bb6b;
+    --dirty: #d7a747;
+    --laundry: #83a8c6;
+    --thread: rgb(241 226 200 / 5%);
+    --sprite-line: #d8c3a0;
   }
 }
 
 * {
   box-sizing: border-box;
+  border-radius: 0 !important; /* pixels are square, everywhere, always */
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  /* A faint woven thread, like linen or gingham. */
+  background-image:
+    repeating-linear-gradient(0deg, var(--thread) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, var(--thread) 0 1px, transparent 1px 4px);
   color: var(--text);
-  font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  /* The window chrome is the app's frame; the page itself never scrolls. */
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
   overflow: hidden;
+  /* Pixel fonts must not be smoothed, or the edges go mushy. */
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
 h1, h2, h3 {
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
+}
+
+h1 {
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+/* Chunky wooden scrollbars. */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: var(--pixel) solid var(--surface-2);
 }
 
 /* ------------------------------------------------------------- structure */
 .app {
   display: grid;
-  grid-template-columns: 232px 1fr;
+  grid-template-columns: 236px 1fr;
   height: 100vh;
 }
 
 .main {
   overflow-y: auto;
-  padding: 28px 32px 48px;
+  padding: 26px 30px 48px;
 }
 
 .loading {
   display: grid;
   place-items: center;
   height: 100vh;
+  font-family: var(--display);
+  font-size: 12px;
   color: var(--text-muted);
 }
 
@@ -82,9 +156,9 @@ h1, h2, h3 {
 
 .view__subtitle,
 .hint {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .spacer {
@@ -95,36 +169,41 @@ h1, h2, h3 {
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px 16px;
+  gap: 22px;
+  padding: 22px 14px;
   background: var(--surface);
-  border-right: 1px solid var(--border);
+  border-right: var(--pixel) solid var(--border);
 }
 
 .sidebar__brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 8px;
-  font-weight: 650;
-  letter-spacing: 0.01em;
+  padding: 0 4px 16px;
+  font-family: var(--display);
+  font-size: 11px;
+  line-height: 1.4;
+  /* A stitched seam under the title. */
+  border-bottom: var(--pixel) dashed var(--border);
 }
 
 .sidebar__mark {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
   background: var(--accent);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 3px 3px 0 var(--shadow);
   color: var(--accent-text);
-  font-size: 15px;
+  font-size: 11px;
 }
 
 .sidebar__links {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -134,19 +213,29 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   width: 100%;
-  padding: 9px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 3px 3px 0 var(--shadow);
   color: var(--text);
   font: inherit;
+  font-size: 15px;
   text-align: left;
   cursor: pointer;
 }
 
 .sidebar__link:hover {
-  background: var(--surface-2);
+  background: var(--surface);
+}
+
+/* Pressing a control pushes it into the page, sprite-style. */
+.sidebar__link:active,
+.button:active:not(:disabled),
+.chip:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--shadow);
 }
 
 .sidebar__link.is-active {
@@ -155,18 +244,21 @@ h1, h2, h3 {
 }
 
 .sidebar__badge {
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: rgb(128 128 160 / 22%);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
+  min-width: 24px;
+  padding: 1px 5px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
 }
 
 .sidebar__footer {
   margin-top: auto;
-  padding: 0 8px;
+  padding: 0 4px;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 /* --------------------------------------------------------------- filters */
@@ -176,29 +268,38 @@ h1, h2, h3 {
   gap: 10px;
   align-items: center;
   margin-bottom: 22px;
+  padding: 12px;
+  background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 4px 4px 0 var(--shadow);
 }
 
 .filters__search {
-  flex: 1 1 260px;
+  flex: 1 1 240px;
 }
 
 input,
 select,
 textarea {
   padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
+  background: var(--surface-2);
+  border: var(--pixel) solid var(--border);
   color: var(--text);
   font: inherit;
+  font-size: 15px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
 }
 
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: var(--pixel) solid var(--gold);
+  outline-offset: 2px;
 }
 
 textarea {
@@ -208,86 +309,89 @@ textarea {
 .checkbox {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
 }
 
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
 /* --------------------------------------------------------------- buttons */
 .button {
-  padding: 8px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
+  padding: 9px 15px;
+  background: var(--surface-2);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 3px 3px 0 var(--shadow);
   color: var(--text);
   font: inherit;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .button:hover:not(:disabled) {
-  background: var(--surface-2);
+  background: var(--surface);
 }
 
 .button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .button--primary {
-  border-color: transparent;
   background: var(--accent);
   color: var(--accent-text);
-  font-weight: 550;
 }
 
 .button--primary:hover:not(:disabled) {
-  filter: brightness(1.08);
-  background: var(--accent);
+  background: var(--accent-hover);
 }
 
 .button--danger {
-  border-color: transparent;
-  background: transparent;
+  background: var(--surface-2);
   color: var(--danger);
 }
 
 .button--small {
-  padding: 5px 10px;
+  padding: 5px 9px;
+  box-shadow: 2px 2px 0 var(--shadow);
   font-size: 13px;
 }
 
 .icon-button {
-  width: 28px;
-  height: 28px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: var(--surface-2);
+  border: var(--pixel) solid var(--border);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
 }
 
 .icon-button:hover {
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--danger);
+  color: var(--surface);
 }
 
 /* ----------------------------------------------------------------- pills */
 .pill {
   display: inline-block;
-  padding: 3px 10px;
-  border: 1px solid currentcolor;
-  border-radius: 999px;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 550;
+  padding: 3px 8px;
+  background: var(--surface-2);
+  border: 2px solid currentcolor;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-}
-
-button.pill {
-  font-family: inherit;
 }
 
 .pill--clean { color: var(--clean); }
@@ -295,49 +399,57 @@ button.pill {
 .pill--in-laundry { color: var(--laundry); }
 
 .badge {
-  padding: 3px 9px;
-  border-radius: 999px;
+  padding: 3px 8px;
   background: var(--surface-2);
+  border: 2px solid var(--border);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .badge--ok {
-  background: color-mix(in srgb, var(--clean) 18%, transparent);
+  border-color: var(--clean);
   color: var(--clean);
 }
 
 /* ------------------------------------------------------------------ grid */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 18px;
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
   background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 5px 5px 0 var(--shadow);
+}
+
+.card:hover {
+  background: var(--surface-2);
 }
 
 .card__photo {
   position: relative;
+  display: block;
   padding: 0;
-  border: 0;
   background: none;
+  border: 0;
+  border-bottom: var(--pixel) solid var(--border);
   cursor: pointer;
 }
 
 .card__favorite {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  color: #ffc857;
-  font-size: 16px;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 55%);
+  top: 6px;
+  right: 6px;
+  padding: 0 4px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--gold);
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .photo {
@@ -346,37 +458,53 @@ button.pill {
   aspect-ratio: 1;
   object-fit: cover;
   background: var(--surface-2);
+  /* Keep photos crunchy rather than smoothly interpolated. */
+  image-rendering: pixelated;
 }
 
 .photo--empty {
-  display: grid;
-  place-items: center;
-  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-family: var(--display);
+  font-size: 7px;
+  line-height: 1.8;
   text-align: center;
-  text-transform: uppercase;
+  image-rendering: auto;
 }
 
-/* The thumbnails in outfit rows and laundry lists are too small for a word. */
-.outfit__item .photo--empty,
-.laundry-list .photo--empty {
-  font-size: 9px;
-  letter-spacing: 0;
+.sprite {
+  width: 56%;
+  max-width: 104px;
+  height: auto;
+}
+
+/* In the small thumbnails there is only room for the sprite itself. */
+.laundry-list .photo--empty span,
+.outfit__item .photo--empty span,
+.chip .photo--empty span {
+  display: none;
+}
+
+.laundry-list .sprite,
+.outfit__item .sprite {
+  width: 74%;
 }
 
 .card__body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px 12px;
+  gap: 7px;
+  padding: 10px 11px 12px;
 }
 
 .card__title {
   overflow: hidden;
-  font-size: 14px;
+  font-size: 16px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -385,7 +513,7 @@ button.pill {
   overflow: hidden;
   margin: 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -395,17 +523,17 @@ button.pill {
   gap: 8px;
   align-items: center;
   justify-content: space-between;
-  margin-top: 2px;
 }
 
 .empty {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   place-items: center;
-  padding: 80px 20px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
+  padding: 70px 20px;
+  background: var(--surface);
+  border: var(--pixel) dashed var(--border);
   color: var(--text-muted);
+  text-align: center;
 }
 
 /* --------------------------------------------------------------- dialogs */
@@ -414,8 +542,8 @@ button.pill {
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 32px;
-  background: rgb(0 0 0 / 45%);
+  padding: 30px;
+  background: rgb(36 28 21 / 62%);
   z-index: 20;
 }
 
@@ -424,10 +552,9 @@ button.pill {
   flex-direction: column;
   width: min(720px, 100%);
   max-height: 100%;
-  border: 1px solid var(--border);
-  border-radius: 14px;
   background: var(--surface);
-  box-shadow: var(--shadow);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 8px 8px 0 var(--shadow);
 }
 
 .dialog--wide {
@@ -442,8 +569,16 @@ button.pill {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border-bottom: var(--pixel) solid var(--border);
+}
+
+.dialog__header h2 {
+  font-family: var(--display);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .dialog__body {
@@ -455,11 +590,12 @@ button.pill {
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 14px 18px;
-  border-top: 1px solid var(--border);
+  padding: 13px 16px;
+  background: var(--surface-2);
+  border-top: var(--pixel) solid var(--border);
 }
 
-/* ------------------------------------------------------------ item form */
+/* ------------------------------------------------------------- item form */
 .item-form {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
@@ -473,7 +609,8 @@ button.pill {
 }
 
 .item-form__photo .photo {
-  border-radius: var(--radius);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 4px 4px 0 var(--shadow);
 }
 
 .item-form__photo-actions {
@@ -494,7 +631,6 @@ button.pill {
   flex: 1;
   flex-direction: column;
   gap: 5px;
-  /* Without this the input's intrinsic width stops the row from shrinking. */
   min-width: 0;
 }
 
@@ -507,19 +643,19 @@ button.pill {
 
 .field > span {
   color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 550;
+  font-family: var(--display);
+  font-size: 8px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .field--narrow {
-  flex: 0 0 90px;
+  flex: 0 0 92px;
 }
 
 .field__error {
   color: var(--danger);
-  font-size: 12px;
+  font-size: 13px;
   font-style: normal;
 }
 
@@ -529,13 +665,13 @@ button.pill {
   min-width: 0;
 }
 
-/* ---------------------------------------------------------- outfit form */
+/* ----------------------------------------------------------- outfit form */
 .picker {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-top: 6px;
-  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  border-top: var(--pixel) dashed var(--border);
 }
 
 .picker__header {
@@ -547,44 +683,48 @@ button.pill {
 
 .picker__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 12px;
   max-height: 320px;
   overflow-y: auto;
-  padding: 2px;
+  padding: 4px;
 }
 
 .chip {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  overflow: hidden;
   padding: 0 0 7px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
   background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 3px 3px 0 var(--shadow);
   color: var(--text);
   font: inherit;
   cursor: pointer;
 }
 
+.chip .photo {
+  border-bottom: var(--pixel) solid var(--border);
+}
+
 .chip--on {
-  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
 }
 
 .chip__label {
   overflow: hidden;
-  padding: 0 8px;
-  font-size: 12px;
+  padding: 0 7px;
+  font-size: 13px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* -------------------------------------------------------------- outfits */
+/* --------------------------------------------------------------- outfits */
 .outfit-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .outfit {
@@ -593,9 +733,9 @@ button.pill {
   align-items: flex-start;
   justify-content: space-between;
   padding: 16px 18px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
   background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 5px 5px 0 var(--shadow);
 }
 
 .outfit__main {
@@ -607,8 +747,15 @@ button.pill {
 
 .outfit__heading {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
+}
+
+.outfit__heading h3 {
+  font-family: var(--display);
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 .outfit__notes {
@@ -624,12 +771,11 @@ button.pill {
 
 .outfit__item {
   width: 62px;
-  overflow: hidden;
-  border-radius: 8px;
+  border: var(--pixel) solid var(--border);
 }
 
 .outfit__item.is-dirty {
-  opacity: 0.42;
+  opacity: 0.4;
 }
 
 .outfit__actions {
@@ -639,7 +785,7 @@ button.pill {
   flex-shrink: 0;
 }
 
-/* -------------------------------------------------------------- laundry */
+/* --------------------------------------------------------------- laundry */
 .laundry-group {
   margin-bottom: 30px;
 }
@@ -650,22 +796,25 @@ button.pill {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: var(--pixel) dashed var(--border);
 }
 
 .laundry-group__header h2 {
-  font-size: 16px;
+  font-family: var(--display);
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 .count {
   margin-left: 6px;
   color: var(--text-muted);
-  font-weight: 400;
 }
 
 .laundry-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -675,17 +824,21 @@ button.pill {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 9px 12px;
   background: var(--surface);
+  border: var(--pixel) solid var(--border);
+  box-shadow: 4px 4px 0 var(--shadow);
 }
 
 .laundry-list .photo {
-  width: 44px;
-  height: 44px;
-  border-radius: 7px;
-  font-size: 16px;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--border);
+}
+
+.laundry-list .photo--empty {
+  font-size: 6px;
+  line-height: 1.6;
 }
 
 .laundry-list__text {
@@ -701,16 +854,16 @@ button.pill {
   white-space: nowrap;
 }
 
-/* --------------------------------------------------------------- banner */
+/* ---------------------------------------------------------------- banner */
 .banner {
   display: flex;
   gap: 12px;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 18px;
-  padding: 10px 12px;
-  border: 1px solid var(--danger);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  padding: 11px 13px;
+  background: var(--surface);
+  border: var(--pixel) solid var(--danger);
+  box-shadow: 4px 4px 0 var(--shadow);
   color: var(--danger);
 }
